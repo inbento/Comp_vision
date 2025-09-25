@@ -3,7 +3,6 @@ import numpy as np
 
 video = cv2.VideoCapture(0)
 ok, img = video.read()
-cv2.namedWindow('Camera', cv2.WINDOW_AUTOSIZE)
 
 
 low_redor = np.array([0, 133, 133])
@@ -29,7 +28,10 @@ while (True):
     dilated_img = cv2.dilate(hsv_red_result, kernel)
     eroded_img = cv2.erode(hsv_red_result, kernel)
 
-    cv2.imshow('Camera', closing_img)
+    cv2.imshow('Close', closing_img)
+    cv2.imshow('Open', opening_img)
+    cv2.imshow('Dila', dilated_img)
+    cv2.imshow('Ero', eroded_img)
     
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

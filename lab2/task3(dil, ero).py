@@ -6,9 +6,9 @@ ok, img = video.read()
 cv2.namedWindow('Camera', cv2.WINDOW_AUTOSIZE)
 
 
-low_redor = np.array([0, 100, 100])
-up_redor = np.array([10, 255, 255])
-low_redpur = np.array([170, 100, 100])
+low_redor = np.array([0, 133, 133])
+up_redor = np.array([5, 255, 255])
+low_redpur = np.array([175, 133, 133])
 up_redpur = np.array([180, 255, 255])
 
 kernel = np.ones((5, 5), np.uint8)

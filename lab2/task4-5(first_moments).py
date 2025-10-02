@@ -2,14 +2,15 @@ import cv2
 import numpy as np
 
 video = cv2.VideoCapture(0)
-ok, img = video.read()
+ok, path = video.read()
 
 low_redor = np.array([0, 133, 133])
 up_redor = np.array([7, 255, 255])
 low_redpur = np.array([176, 133, 133])
 up_redpur = np.array([180, 255, 255])
 
-
+lastx = 0
+lasty = 0
 print("Моменты первого порядка:")
 
 while (True):
@@ -49,7 +50,12 @@ while (True):
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 0), 3)
         
         cv2.circle(img, (center_x, center_y), 5, (123, 0, 255), -1)
+    cv2.line(path, (lastx, lasty), (center_x, center_y), (90,0,0), 5)
 
+    lastx = center_x
+    lasty = center_y
+
+    img = cv2.add(img, path)
     cv2.imshow('Camera1', img)
     cv2.imshow('Camera2', hsv_red_result)
     

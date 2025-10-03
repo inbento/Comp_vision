@@ -23,8 +23,13 @@ def gaussian_function(size, sigma):
     return kernel
 
 
-sigma_values = [1.0, 0.66, 0.33]
-matrix_sizes = [3, 5, 7]
+sigma_values = [0.66, 0.33]
+matrix_sizes = [5, 7]
+
+img = cv2.imread(r"E:/GitHub/Comp_vision/lab3/img2.jfif", cv2.IMREAD_GRAYSCALE)
+
+cv2.imshow('Original image', img)
+
 
 for size in matrix_sizes:
     for sigma in sigma_values:
@@ -35,15 +40,13 @@ for size in matrix_sizes:
         print(f"Нормированная матрица Гаусса для размера: {size} и среднеквадратичного отклонения: {sigma}")
         print(gauss_matrix)
 
+        filtered_img = cv2.filter2D(img, -1, gauss_matrix)
 
 
-'''
-img = cv2.imread(r"E:/GitHub/Comp_vision/lab3/img2.jfif", cv2.IMREAD_GRAYSCALE)
+        cv2.imshow(f'Fileterd Image with size matrix = {size}, sigma = {sigma}', filtered_img)
 
-
-cv2.imshow('GRAY IMG', img)
 cv2.waitKey(0)
-
 cv2.destroyAllWindows()
 
-'''
+
+

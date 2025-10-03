@@ -1,0 +1,97 @@
+using System;
+using OpenCvSharp;
+
+class Program
+{
+    static double[,] GaussianFunction(int size, double sigma)
+    {
+        double[,] kernel = new double[size, size];
+        int center = size / 2;
+        int a = center, b = center;
+
+        double elementsSum = 0.0;
+
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                int x = i, y = j;
+                double exp = Math.Exp(-((x - a) * (x - a) + (y - b) * (y - b)) / (2 * sigma * sigma));
+                double gauss = exp / (2 * Math.PI * sigma * sigma);
+                kernel[i, j] = gauss;
+                elementsSum += gauss;
+            }
+        }
+
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                kernel[i, j] /= elementsSum;
+            }
+        }
+
+        return kernel;
+    }
+
+    static Mat SuperSvertka(Mat img, int kernelSize, double sigma)
+    {
+        double[,] kernel = GaussianFunction(kernelSize, sigma);
+
+        int paddingSize = kernelSize / 2;
+        Mat imgPadded = img.CopyMakeBorder(paddingSize, paddingSize, paddingSize, paddingSize, BorderTypes.Reflect);
+
+        Mat gaussBlur = img.Clone();
+        int height = img.Rows;
+        int width = img.Cols;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                double value = 0;
+                int yPadded = y + paddingSize;
+                int xPadded = x + paddingSize;
+
+                for (int k = 0; k < kernelSize; k++)
+                {
+                    for (int l = 0; l < kernelSize; l++)
+                    {
+                        value += imgPadded.At<byte>(yPadded + k - paddingSize, xPadded + l - paddingSize) * kernel[k, l];
+                    }
+                }
+
+                value = Math.Max(0, Math.Min(255, value));
+                gaussBlur.Set(y, x, (byte)value);
+            }
+        }
+
+        return gaussBlur;
+    }
+
+    static void Main(string[] args)
+    {
+        double[] sigmaValues = { 3, 2 };
+        int[] matrixSizes = { 9, 11 };
+
+        Mat img = Cv2.ImRead(@"E:/GitHub/Comp_vision/lab3/img2.jfif", ImreadModes.Grayscale);
+
+        Cv2.ImShow("Original image", img);
+
+        foreach (int size in matrixSizes)
+        {
+            foreach (double sigma in sigmaValues)
+            {
+                Mat filteredImg = SuperSvertka(img, size, sigma);
+                Mat gaussFilter = new Mat();
+                Cv2.GaussianBlur(img, gaussFilter, new Size(size, size), sigma);
+
+                Cv2.ImShow($"Filtered Image with size matrix = {size}, sigma = {sigma}", filteredImg);
+                Cv2.ImShow($"Gaussian Blur with size matrix = {size}, sigma = {sigma}", gaussFilter);
+            }
+        }
+
+        Cv2.WaitKey(0);
+        Cv2.DestroyAllWindows();
+    }
+}
